@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=project'
+      - 'MYSQL_ROOT_PASSWORD=secret'
+      - 'MYSQL_USER=myuser'
+      - 'MYSQL_PASSWORD=secret'
+    ports:
+      - '3307:3306'
