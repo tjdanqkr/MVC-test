@@ -10,7 +10,8 @@ import java.util.UUID;
 @Table(name="PROFILES",
     indexes={
         @Index(name="idx_profile_title", columnList="TITLE"),
-        @Index(name="idx_profile_phone_number", columnList="PHONE_NUMBER")
+        @Index(name="idx_profile_phone_number", columnList="PHONE_NUMBER"),
+        @Index(name="idx_profile_created_at", columnList="CREATED_AT"),
     })
 @Getter
 @Builder
