@@ -21,6 +21,7 @@ private excludedClassFilesForReport(classDirectories) {
     classDirectories.setFrom(
             files(classDirectories.files.collect {
                 fileTree(dir: it, exclude: [
+                        "**/global/**",
                         "**/Q*",
                         "**/*DTO*",
                         "**/*Code*",
