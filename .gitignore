@@ -39,7 +39,6 @@ out/
 .DS_Store
 *.yaml
 *.json
-*.properties
 
 *.log
 *.log.*
