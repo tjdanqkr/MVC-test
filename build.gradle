@@ -23,7 +23,7 @@ private excludedClassFilesForReport(classDirectories) {
                 fileTree(dir: it, exclude: [
                         "**/global/**",
                         "**/Q*",
-                        "**/*DTO*",
+                        "**/*Dto*",
                         "**/*Code*",
                         "**/*Exception*",
                         "**/*Develop*",
