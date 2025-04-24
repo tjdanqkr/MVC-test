@@ -18,7 +18,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
+// JWT 라이브러리 내부에서 clock 을 따로 사용하기 떄문에 Thread.sleep 이 최선임 clock 을 넣을 수 없음
 class TokenServiceImplTest {
     TokenServiceImpl tokenService;
     long expiresIn = 1;

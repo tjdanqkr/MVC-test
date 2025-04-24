@@ -7,10 +7,7 @@ import com.plus.service.user.domain.User;
 import com.plus.service.user.domain.repository.UserRepository;
 import com.plus.service.user.error.TokenErrorCode;
 import com.plus.service.user.error.UserErrorCode;
-import com.plus.service.user.presentation.dto.SignInRequest;
-import com.plus.service.user.presentation.dto.SignUpRequest;
-import com.plus.service.user.presentation.dto.TokenDto;
-import com.plus.service.user.presentation.dto.TokenResponse;
+import com.plus.service.user.presentation.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,11 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -72,10 +69,12 @@ class UserServiceImplTest {
             when(passwordEncoder.encode(request.password())).thenReturn("encodedPassword");
 
             // When
-            userService.signUp(request);
+            UserResponse userResponse = userService.signUp(request);
 
             // Then
             verify(userRepository, times(1)).save(any(User.class));
+            assertEquals(request.username(), userResponse.username());
+            assertEquals(request.email(), userResponse.email());
         }
     }
 
@@ -163,4 +162,36 @@ class UserServiceImplTest {
             assertEquals(username, userDetails.getUsername());
         }
     }
+    @Nested
+    @DisplayName("getMe 테스트")
+    class GetMeTests {
+        @Test
+        @DisplayName("getMe 테스트")
+        void getMe() {
+            // Given
+            User user = User.builder().id(UUID.randomUUID()).username("testUser").build();
+            UserTokenDetails userDetails = UserTokenDetails.of(user);
+            when(userRepository.findById(userDetails.getId()))
+                    .thenReturn(Optional.of(user));
+
+            // When
+            UserResponse response = userService.getMe(userDetails);
+
+            // Then
+            assertEquals(user.getUsername(), response.username());
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 사용자로 실패")
+        void getMeUserNotFound() {
+            // Given
+            UserTokenDetails userDetails = UserTokenDetails.of(User.builder().id(UUID.randomUUID()).build());
+            when(userRepository.findById(userDetails.getId())).thenReturn(Optional.empty());
+
+            // When & Then
+            BusinessException exception = assertThrows(BusinessException.class, () -> userService.getMe(userDetails));
+            assertEquals(TokenErrorCode.USER_TOKEN_INVALID.getMessage(), exception.getMessage());
+        }
+    }
+
 }

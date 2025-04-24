@@ -11,20 +11,26 @@ import com.plus.service.user.error.UserErrorCode;
 import com.plus.service.user.presentation.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserDetailsService, UserService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void signUp(SignUpRequest request) {
+    public UserResponse getMe(UserTokenDetails userDetails) {
+        User user = userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new BusinessException(TokenErrorCode.USER_TOKEN_INVALID));
+        return UserResponse.of(user);
+    }
+
+    @Override
+    public UserResponse signUp(SignUpRequest request) {
         if (userRepository.findByEmailAndDeletedIsFalse(request.email()).isPresent()) {
             throw new BusinessException(UserErrorCode.USER_ALREADY_EXISTS);
         }
@@ -34,6 +40,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 .encodedPassword(passwordEncoder.encode(request.password()))
                 .build();
         userRepository.save(user);
+        return UserResponse.of(user);
     }
 
     @Override
