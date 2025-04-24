@@ -1,6 +1,7 @@
 package com.plus.service.user.domain;
 
 import com.plus.service.global.jpa.BaseTimeEntity;
+import com.plus.service.profile.domain.Profile;
 import jakarta.persistence.*;
 import lombok.*;
 

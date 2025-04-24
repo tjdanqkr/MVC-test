@@ -1,6 +1,6 @@
-package com.plus.service.user.domain.repository;
+package com.plus.service.profile.domain.repository;
 
-import com.plus.service.user.domain.ProfileView;
+import com.plus.service.profile.domain.ProfileView;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

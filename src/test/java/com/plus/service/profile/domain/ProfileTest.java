@@ -1,4 +1,4 @@
-package com.plus.service.user.domain;
+package com.plus.service.profile.domain;
 
 import org.junit.jupiter.api.Test;
 
