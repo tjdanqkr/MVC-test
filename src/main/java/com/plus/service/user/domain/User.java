@@ -38,7 +38,8 @@ public class User extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name="ROLE")
-    private UserRole role;
+    @Builder.Default
+    private UserRole role = UserRole.USER;
 
     @OneToMany(mappedBy="user", cascade=CascadeType.ALL, orphanRemoval=true)
     @ToString.Exclude
