@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
                 .toList();
 
         return ResponseEntity.badRequest().body(
-                ErrorResponse.of("입력값이 유효하지 않습니다.", 400, fieldErrors)
+                ErrorResponse.of("Invalid input data", 400, fieldErrors)
         );
     }
 

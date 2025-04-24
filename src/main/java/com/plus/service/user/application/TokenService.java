@@ -3,7 +3,7 @@ package com.plus.service.user.application;
 import com.plus.service.user.presentation.dto.TokenClaimDto;
 import com.plus.service.user.presentation.dto.TokenDto;
 
-import java.util.UUID;
+
 
 public interface TokenService {
     TokenDto createAccessToken(TokenClaimDto tokenClaimDto);

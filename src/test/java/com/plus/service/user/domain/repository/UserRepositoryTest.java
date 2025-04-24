@@ -33,6 +33,42 @@ class UserRepositoryTest {
     }
 
     @Nested
+    @DisplayName("사용자 이름 기반 사용자 조회 테스트")
+    class FindByUsernameAndDeletedIsFalse {
+        @Test
+        @DisplayName("존재하고 삭제되지 않은 사용자 이름이면 User 반환")
+        void shouldReturnUser_whenUsernameExistsAndNotDeleted() {
+            // Given
+            String username = "Test User1";
+            // When
+            Optional<User> byUsernameAndDeletedIsFalse = userRepository.findByUsernameAndDeletedIsFalse(username);
+            // Then
+            assertTrue(byUsernameAndDeletedIsFalse.isPresent());
+            assertEquals(byUsernameAndDeletedIsFalse.get().getUsername(), username);
+        }
+        @Test
+        @DisplayName("없는 사용자 이름이면 Null 반환")
+        void shouldReturnEmpty_whenUsernameDoesNotExist() {
+            // Given
+            String username = "NonExistentUser";
+            // When
+            Optional<User> byUsernameAndDeletedIsFalse = userRepository.findByUsernameAndDeletedIsFalse(username);
+            // Then
+            assertTrue(byUsernameAndDeletedIsFalse.isEmpty());
+        }
+        @Test
+        @DisplayName("삭제된 사용자이면 Null 반환")
+        void shouldReturnEmpty_whenUserIsDeleted() {
+            // Given
+            String username = "Test User0";
+            // When
+            Optional<User> byUsernameAndDeletedIsFalse = userRepository.findByUsernameAndDeletedIsFalse(username);
+            // Then
+            assertTrue(byUsernameAndDeletedIsFalse.isEmpty());
+        }
+    }
+
+    @Nested
     @DisplayName("이메일 + 삭제 여부 기반 사용자 조회 테스트")
     class FindByEmailAndDeletedIsFalse{
         @Test

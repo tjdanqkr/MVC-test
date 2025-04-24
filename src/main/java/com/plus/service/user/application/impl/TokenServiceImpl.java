@@ -2,12 +2,17 @@ package com.plus.service.user.application.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.AlgorithmMismatchException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.plus.service.global.error.BusinessException;
 import com.plus.service.user.application.TokenService;
-import com.plus.service.user.error.TokenException;
+import com.plus.service.user.error.TokenErrorCode;
 import com.plus.service.user.presentation.dto.TokenClaimDto;
 import com.plus.service.user.presentation.dto.TokenDto;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +22,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class TokenServiceImpl implements TokenService {
     private final Algorithm accessTokenSecret;
@@ -66,8 +72,13 @@ public class TokenServiceImpl implements TokenService {
                     .getClaim(TOKEN_USER_ID_KEY)
                     .asString();
             return new TokenClaimDto(UUID.fromString(userId), userName);
+        } catch (SignatureVerificationException e) {
+            throw new BusinessException(TokenErrorCode.USER_TOKEN_INVALID);
+        } catch (TokenExpiredException e) {
+            throw new BusinessException(TokenErrorCode.USER_TOKEN_EXPIRED);
         } catch (Exception e) {
-            throw new TokenException();
+            log.error(e.getMessage());
+            throw new BusinessException(TokenErrorCode.USER_TOKEN_INVALID);
         }
     }
 
@@ -82,8 +93,13 @@ public class TokenServiceImpl implements TokenService {
                     .getClaim(TOKEN_USER_ID_KEY)
                     .asString();
             return new TokenClaimDto(UUID.fromString(userId), userName);
+        } catch (SignatureVerificationException e) {
+            throw new BusinessException(TokenErrorCode.USER_TOKEN_INVALID);
+        } catch (TokenExpiredException e) {
+            throw new BusinessException(TokenErrorCode.USER_TOKEN_EXPIRED);
         } catch (Exception e) {
-            throw new TokenException();
+            log.error(e.getMessage());
+            throw new BusinessException(TokenErrorCode.USER_TOKEN_INVALID);
         }
     }
 

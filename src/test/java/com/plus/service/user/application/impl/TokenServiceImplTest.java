@@ -1,6 +1,7 @@
 package com.plus.service.user.application.impl;
 
-import com.plus.service.user.error.TokenException;
+import com.plus.service.global.error.BusinessException;
+import com.plus.service.user.error.TokenErrorCode;
 import com.plus.service.user.presentation.dto.TokenClaimDto;
 import com.plus.service.user.presentation.dto.TokenDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,13 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TokenServiceImplTest {
     TokenServiceImpl tokenService;
+    long expiresIn = 1500;
+    String accessSecret = "secret";
+    String refreshSecret = "refreshSecret";
     @BeforeEach
     void setUp() {
         tokenService = new TokenServiceImpl(
-                "secret",
-                3000,
-                "refreshSecret",
-                3000
+                accessSecret,
+                expiresIn,
+                refreshSecret,
+                expiresIn
         );
     }
 
@@ -86,11 +90,13 @@ class TokenServiceImplTest {
             String userName = "userName";
             TokenClaimDto tokenClaimDto = new TokenClaimDto(userId, userName);
             TokenDto tokenDto = tokenService.createAccessToken(tokenClaimDto);
-            Thread.sleep(4000);
+            Thread.sleep(expiresIn);
             // When & Then
-            assertThrows(TokenException.class, () ->
+            BusinessException businessException = assertThrows(BusinessException.class, () ->
                     tokenService.getClaimsFromAccessToken(tokenDto.token())
             );
+            assertEquals(TokenErrorCode.USER_TOKEN_EXPIRED.getStatusCode(), businessException.getStatusCode());
+            assertEquals(TokenErrorCode.USER_TOKEN_EXPIRED.getMessage(), businessException.getMessage());
         }
         @Test
         @DisplayName("AccessToken 검증 실패 - 서명 오류")
@@ -101,9 +107,11 @@ class TokenServiceImplTest {
             TokenClaimDto tokenClaimDto = new TokenClaimDto(userId, userName);
             TokenDto tokenDto = tokenService.createAccessToken(tokenClaimDto);
             // When & Then
-            assertThrows(TokenException.class, () ->
+            BusinessException businessException = assertThrows(BusinessException.class, () ->
                     tokenService.getClaimsFromAccessToken(tokenDto.token() + "123")
             );
+            assertEquals(TokenErrorCode.USER_TOKEN_INVALID.getStatusCode(), businessException.getStatusCode());
+            assertEquals(TokenErrorCode.USER_TOKEN_INVALID.getMessage(), businessException.getMessage());
         }
     }
     @Nested
@@ -131,11 +139,13 @@ class TokenServiceImplTest {
             String userName = "userName";
             TokenClaimDto tokenClaimDto = new TokenClaimDto(userId, userName);
             TokenDto tokenDto = tokenService.createRefreshToken(tokenClaimDto);
-            Thread.sleep(4000);
+            Thread.sleep(expiresIn);
             // When & Then
-            assertThrows(TokenException.class, () ->
+            BusinessException businessException = assertThrows(BusinessException.class, () ->
                     tokenService.getClaimsFromRefreshToken(tokenDto.token())
             );
+            assertEquals(TokenErrorCode.USER_TOKEN_EXPIRED.getStatusCode(), businessException.getStatusCode());
+            assertEquals(TokenErrorCode.USER_TOKEN_EXPIRED.getMessage(), businessException.getMessage());
         }
         @Test
         @DisplayName("RefreshToken 검증 실패 - 서명 오류")
@@ -146,9 +156,11 @@ class TokenServiceImplTest {
             TokenClaimDto tokenClaimDto = new TokenClaimDto(userId, userName);
             TokenDto tokenDto = tokenService.createRefreshToken(tokenClaimDto);
             // When & Then
-            assertThrows(TokenException.class, () ->
+            BusinessException businessException = assertThrows(BusinessException.class, () ->
                     tokenService.getClaimsFromRefreshToken(tokenDto.token() + "123")
             );
+            assertEquals(TokenErrorCode.USER_TOKEN_INVALID.getStatusCode(), businessException.getStatusCode());
+            assertEquals(TokenErrorCode.USER_TOKEN_INVALID.getMessage(), businessException.getMessage());
         }
     }
     @Nested
@@ -176,7 +188,7 @@ class TokenServiceImplTest {
             String userName = "userName";
             TokenClaimDto tokenClaimDto = new TokenClaimDto(userId, userName);
             TokenDto tokenDto = tokenService.createAccessToken(tokenClaimDto);
-            Thread.sleep(4000);
+            Thread.sleep(expiresIn);
             // When & Then
             assertFalse(tokenService.isValidAccessToken(tokenDto.token()));
         }
@@ -217,7 +229,7 @@ class TokenServiceImplTest {
             String userName = "userName";
             TokenClaimDto tokenClaimDto = new TokenClaimDto(userId, userName);
             TokenDto tokenDto = tokenService.createRefreshToken(tokenClaimDto);
-            Thread.sleep(4000);
+            Thread.sleep(expiresIn);
             // When & Then
             assertFalse(tokenService.isValidRefreshToken(tokenDto.token()));
         }

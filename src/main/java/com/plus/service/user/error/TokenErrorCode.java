@@ -2,15 +2,16 @@ package com.plus.service.user.error;
 
 import com.plus.service.global.error.BaseExceptionCode;
 
-public class TokenException extends RuntimeException implements BaseExceptionCode {
+public enum TokenErrorCode implements BaseExceptionCode {
+    USER_TOKEN_EXPIRED(403, "User token expired"),
+    USER_TOKEN_INVALID(403, "User token invalid");
     private final int statusCode;
     private final String message;
-
-    public TokenException() {
-        super("Unauthorized: Token Error");
-        this.statusCode = 401;
-        this.message = "Unauthorized";
+    TokenErrorCode(int statusCode, String message) {
+        this.statusCode = statusCode;
+        this.message = message;
     }
+
 
     @Override
     public int getStatusCode() {
@@ -21,5 +22,4 @@ public class TokenException extends RuntimeException implements BaseExceptionCod
     public String getMessage() {
         return message;
     }
-
 }

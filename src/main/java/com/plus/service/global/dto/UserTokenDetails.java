@@ -14,13 +14,13 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserTokenDetail implements UserDetails {
+public class UserTokenDetails implements UserDetails {
     private final UUID id;
     private final String email;
     private final String username;
     private final UserRole role;
-    public static UserTokenDetail of(User user) {
-        return new UserTokenDetail(user.getId(), user.getEmail(), user.getUsername(), user.getRole());
+    public static UserTokenDetails of(User user) {
+        return new UserTokenDetails(user.getId(), user.getEmail(), user.getUsername(), user.getRole());
     }
 
     @Override
