@@ -146,8 +146,8 @@ class AuthControllerTest {
             mockMvc.perform(post("/api/v1/auth/sign-in")
                             .content(body)
                             .contentType("application/json"))
-                    .andExpect(status().isUnauthorized()) // 401 Unauthorized
-                    .andExpect(jsonPath("$.statusCode").value(401))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.statusCode").value(400))
                     .andExpect(jsonPath("$.data").doesNotExist())
                     .andExpect(jsonPath("$.message").value("Login failed"));
         }
@@ -162,8 +162,8 @@ class AuthControllerTest {
             mockMvc.perform(post("/api/v1/auth/sign-in")
                             .content(body)
                             .contentType("application/json"))
-                    .andExpect(status().isUnauthorized()) // 401 Unauthorized
-                    .andExpect(jsonPath("$.statusCode").value(401))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.statusCode").value(400))
                     .andExpect(jsonPath("$.data").doesNotExist())
                     .andExpect(jsonPath("$.message").value("Login failed"));
         }
@@ -184,8 +184,8 @@ class AuthControllerTest {
                             .header("Authorization", "Bearer " + accessToken.token()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.id").value(user.getId().toString()))
-                    .andExpect(jsonPath("$.data.username").value("username"))
-                    .andExpect(jsonPath("$.data.email").value("test@test.com"));
+                    .andExpect(jsonPath("$.data.username").value(user.getUsername()))
+                    .andExpect(jsonPath("$.data.email").value(user.getEmail()));
         }
 
         @Test

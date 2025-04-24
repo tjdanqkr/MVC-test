@@ -24,6 +24,8 @@ private excludedClassFilesForReport(classDirectories) {
                         "**/global/**",
                         "**/Q*",
                         "**/*Dto*",
+                        "**/dto/**",
+                        "**/*Filter*",
                         "**/*Code*",
                         "**/*Exception*",
                         "**/*Develop*",

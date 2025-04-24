@@ -1,6 +1,5 @@
 package com.plus.service.user.application.impl;
 
-import com.plus.service.global.dto.UserTokenDetails;
 import com.plus.service.global.error.BusinessException;
 import com.plus.service.user.application.TokenService;
 import com.plus.service.user.application.UserService;
@@ -9,14 +8,14 @@ import com.plus.service.user.domain.repository.UserRepository;
 import com.plus.service.user.error.TokenErrorCode;
 import com.plus.service.user.error.UserErrorCode;
 import com.plus.service.user.presentation.dto.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TokenService tokenService;
@@ -39,8 +38,8 @@ public class UserServiceImpl implements UserService {
                 .username(request.username())
                 .encodedPassword(passwordEncoder.encode(request.password()))
                 .build();
-        userRepository.save(user);
-        return UserResponse.of(user);
+        User save = userRepository.save(user);
+        return UserResponse.of(save);
     }
 
     @Override
@@ -56,11 +55,6 @@ public class UserServiceImpl implements UserService {
         return TokenResponse.of(accessToken, refreshToken);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsernameAndDeletedIsFalse(username)
-                .orElseThrow(() -> new BusinessException(TokenErrorCode.USER_TOKEN_INVALID));
-        return UserTokenDetails.of(user);
-    }
+
 
 }

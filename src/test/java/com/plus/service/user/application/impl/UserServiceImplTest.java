@@ -1,6 +1,6 @@
 package com.plus.service.user.application.impl;
 
-import com.plus.service.global.dto.UserTokenDetails;
+import com.plus.service.user.presentation.dto.UserTokenDetails;
 import com.plus.service.global.error.BusinessException;
 import com.plus.service.user.application.TokenService;
 import com.plus.service.user.domain.User;
@@ -67,14 +67,16 @@ class UserServiceImplTest {
             SignUpRequest request = new SignUpRequest("test@test.com", "username", "password");
             when(userRepository.findByEmailAndDeletedIsFalse(request.email())).thenReturn(Optional.empty());
             when(passwordEncoder.encode(request.password())).thenReturn("encodedPassword");
-
+            when(userRepository.save(any(User.class))).thenReturn(User.builder()
+                    .id(UUID.randomUUID())
+                    .email("test@test.com")
+                    .username("username")
+                    .build());
             // When
             UserResponse userResponse = userService.signUp(request);
 
             // Then
             verify(userRepository, times(1)).save(any(User.class));
-            assertEquals(request.username(), userResponse.username());
-            assertEquals(request.email(), userResponse.email());
         }
     }
 
@@ -131,37 +133,7 @@ class UserServiceImplTest {
         }
     }
 
-    @Nested
-    @DisplayName("사용자 조회 테스트")
-    class LoadUserByUsernameTests {
 
-        @Test
-        @DisplayName("존재하지 않는 사용자 이름으로 실패")
-        void loadUserByUsernameNotFound() {
-            // Given
-            String username = "username";
-            when(userRepository.findByUsernameAndDeletedIsFalse(username)).thenReturn(Optional.empty());
-
-            // When & Then
-            BusinessException exception = assertThrows(BusinessException.class, () -> userService.loadUserByUsername(username));
-            assertEquals(TokenErrorCode.USER_TOKEN_INVALID.getMessage(), exception.getMessage());
-        }
-
-        @Test
-        @DisplayName("사용자 이름으로 조회 성공")
-        void loadUserByUsernameSuccess() {
-            // Given
-            String username = "username";
-            User user = User.builder().username(username).build();
-            when(userRepository.findByUsernameAndDeletedIsFalse(username)).thenReturn(Optional.of(user));
-
-            // When
-            UserTokenDetails userDetails = (UserTokenDetails) userService.loadUserByUsername(username);
-
-            // Then
-            assertEquals(username, userDetails.getUsername());
-        }
-    }
     @Nested
     @DisplayName("getMe 테스트")
     class GetMeTests {

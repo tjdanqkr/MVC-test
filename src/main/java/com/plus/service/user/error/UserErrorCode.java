@@ -3,7 +3,7 @@ package com.plus.service.user.error;
 import com.plus.service.global.error.BaseExceptionCode;
 
 public enum UserErrorCode implements BaseExceptionCode {
-    LOGIN_FAILED(401, "Login failed"),
+    LOGIN_FAILED(400, "Login failed"),
     USER_NOT_FOUND(404, "User not found"),
     USER_ALREADY_EXISTS(409, "User already exists");
 

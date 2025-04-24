@@ -10,7 +10,7 @@ public class ApiResponse<T> {
     private final boolean success;
     private final T data;
     private final int statusCode;
-    private final LocalDateTime timestamp = LocalDateTime.now();
+    private final String timestamp = LocalDateTime.now().toString();
 
     public static <T> ApiResponse<T> success(T data) {
         return new ApiResponse<>(true, data, 200);

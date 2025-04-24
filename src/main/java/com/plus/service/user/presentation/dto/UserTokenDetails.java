@@ -1,4 +1,4 @@
-package com.plus.service.global.dto;
+package com.plus.service.user.presentation.dto;
 
 import com.plus.service.user.domain.User;
 import com.plus.service.user.domain.UserRole;

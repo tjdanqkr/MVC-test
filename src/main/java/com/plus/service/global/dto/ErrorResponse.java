@@ -15,7 +15,7 @@ public class ErrorResponse {
     private final String message;
     private final int statusCode;
     private final List<FieldError> errors;
-    private final LocalDateTime timestamp = LocalDateTime.now();
+    private final String timestamp = LocalDateTime.now().toString();
     @Getter
     @Builder
     public static class FieldError {

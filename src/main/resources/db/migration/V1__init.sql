@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS USERS (
     INDEX idx_user_email (EMAIL),
     INDEX idx_user_username (USERNAME)
 );
-# TODO: user 와 분리 예정 index 추가와 FK 제거
 CREATE TABLE IF NOT EXISTS PROFILES (
     PROFILE_ID BINARY(16) NOT NULL,
     TITLE VARCHAR(255) NOT NULL,

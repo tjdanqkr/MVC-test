@@ -1,7 +1,7 @@
 package com.plus.service.user.presentation;
 
 import com.plus.service.global.dto.ApiResponse;
-import com.plus.service.global.dto.UserTokenDetails;
+import com.plus.service.user.presentation.dto.UserTokenDetails;
 import com.plus.service.user.application.AuthService;
 import com.plus.service.user.presentation.dto.SignInRequest;
 import com.plus.service.user.presentation.dto.SignUpRequest;

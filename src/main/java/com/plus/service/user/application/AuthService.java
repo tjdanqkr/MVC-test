@@ -1,7 +1,6 @@
 package com.plus.service.user.application;
 
-import com.plus.service.global.dto.UserTokenDetails;
-import com.plus.service.user.domain.User;
+import com.plus.service.user.presentation.dto.UserTokenDetails;
 import com.plus.service.user.presentation.dto.SignInRequest;
 import com.plus.service.user.presentation.dto.SignUpRequest;
 import com.plus.service.user.presentation.dto.TokenResponse;
