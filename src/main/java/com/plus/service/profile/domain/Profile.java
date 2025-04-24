@@ -48,7 +48,7 @@ public class Profile extends BaseTimeEntity {
     @Column(name="VIEW_COUNT")
     private int viewCount;
     // TODO: 나중에 user ID로 변경
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USER_ID", nullable=false)
     @ToString.Exclude
     private User user;

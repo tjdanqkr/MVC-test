@@ -41,7 +41,6 @@ public class TokenServiceImpl implements TokenService {
                 .withClaim(TOKEN_USER_ID_KEY, tokenClaimDto.userId().toString())
                 .withExpiresAt(expiresAt)
                 .sign(accessTokenSecret);
-        System.out.println(expiresAt);
         return new TokenDto(token, expiresAt.atZone(clock.getZone()).toLocalDateTime());
     }
 
@@ -70,7 +69,6 @@ public class TokenServiceImpl implements TokenService {
         } catch (SignatureVerificationException e) {
             throw new BusinessException(TokenErrorCode.USER_TOKEN_INVALID);
         } catch (TokenExpiredException e) {
-            e.printStackTrace();
             throw new BusinessException(TokenErrorCode.USER_TOKEN_EXPIRED);
         } catch (Exception e) {
             log.error(e.getMessage());
