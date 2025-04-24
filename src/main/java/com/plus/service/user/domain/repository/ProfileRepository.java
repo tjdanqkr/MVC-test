@@ -7,5 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProfileRepository extends JpaRepository<Profile, UUID> {
-    List<Profile> findByDeletedFalse();
+    // TODO: 메소드 네임이 너무 길어서 QueryDSL로 바꿔야 함
+    List<Profile> findByUser_IdAndDeletedIsFalseAndUser_DeletedIsFalse(UUID userId);
 }

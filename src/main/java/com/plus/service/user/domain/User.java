@@ -4,6 +4,7 @@ import com.plus.service.global.jpa.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -43,5 +44,10 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy="user", cascade=CascadeType.ALL, orphanRemoval=true)
     @ToString.Exclude
-    private Set<Profile> profiles;
+    @Builder.Default
+    private Set<Profile> profiles = new HashSet<>();
+
+    public void deleted(){
+        this.deleted = true;
+    }
 }
