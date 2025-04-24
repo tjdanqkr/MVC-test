@@ -10,10 +10,7 @@ import com.plus.service.user.presentation.dto.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +28,12 @@ public class AuthController {
     @GetMapping("/api/v1/auth/me")
     public ApiResponse<UserResponse> me(@AuthenticationPrincipal UserTokenDetails user) {
         return ApiResponse.success(authService.getMe(user));
+    }
+    @GetMapping("/api/v1/auth/refresh")
+    public ApiResponse<TokenResponse> refresh(
+            @AuthenticationPrincipal UserTokenDetails user
+        , @RequestHeader("Refresh-Token") String refreshToken) {
+        return ApiResponse.success(authService.refresh(user, refreshToken));
     }
 
 }

@@ -12,4 +12,6 @@ public interface AuthService {
     TokenResponse signIn(SignInRequest request);
 
     UserResponse getMe(UserTokenDetails userDetails);
+
+    TokenResponse refresh(UserTokenDetails user, String refreshToken);
 }

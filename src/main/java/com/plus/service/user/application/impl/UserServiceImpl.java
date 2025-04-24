@@ -50,11 +50,21 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(UserErrorCode.LOGIN_FAILED);
         }
         TokenClaimDto tokenClaimDto = TokenClaimDto.of(user);
-        TokenDto accessToken = tokenService.createAccessToken(tokenClaimDto);
-        TokenDto refreshToken = tokenService.createRefreshToken(tokenClaimDto);
-        return TokenResponse.of(accessToken, refreshToken);
+        TokenDto accessTokenDto = tokenService.createAccessToken(tokenClaimDto);
+        TokenDto refreshTokenDto = tokenService.createRefreshToken(tokenClaimDto);
+        return TokenResponse.of(accessTokenDto, refreshTokenDto);
     }
 
+    @Override
+    public TokenResponse refresh(UserTokenDetails user, String refreshToken) {
+        TokenClaimDto claimsFromRefreshToken = tokenService.getClaimsFromRefreshToken(refreshToken);
 
-
+        if(!user.getId().equals(claimsFromRefreshToken.userId())) {
+            throw new BusinessException(TokenErrorCode.USER_TOKEN_INVALID);
+        }
+        TokenClaimDto tokenClaimDto = TokenClaimDto.of(user);
+        TokenDto accessTokenDto = tokenService.createAccessToken(tokenClaimDto);
+        TokenDto refreshTokenDto = tokenService.createRefreshToken(tokenClaimDto);
+        return TokenResponse.of(accessTokenDto, refreshTokenDto);
+    }
 }

@@ -202,4 +202,39 @@ class AuthControllerTest {
                     .andExpect(status().isUnauthorized());
         }
     }
+    @Nested
+    @DisplayName("토큰 리프레시 테스트")
+    class RefreshToken {
+        @Test
+        @DisplayName("성공")
+        void refresh() throws Exception {
+            // Given
+            User user = users.get(1);
+            TokenDto accessToken = tokenService.createAccessToken(TokenClaimDto.of(user));
+            TokenDto refreshToken = tokenService.createRefreshToken(TokenClaimDto.of(user));
+
+            // When & Then
+            mockMvc.perform(get("/api/v1/auth/refresh")
+                            .header("Authorization", "Bearer " + accessToken.token())
+                            .header("Refresh-Token", refreshToken.token()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.accessToken").exists())
+                    .andExpect(jsonPath("$.data.refreshToken").exists());
+        }
+        @Test
+        @DisplayName("실패 - 존재하지 않는 유저")
+        void refreshUserNotFound() throws Exception {
+            // Given
+            User user = users.get(0);
+            TokenDto accessToken = tokenService.createAccessToken(TokenClaimDto.of(user));
+            TokenDto refreshToken = tokenService.createRefreshToken(TokenClaimDto.of(user));
+
+            // When & Then
+            mockMvc.perform(get("/api/v1/auth/refresh")
+                            .header("Authorization", "Bearer " + accessToken.token())
+                            .header("Refresh-Token", refreshToken.token()))
+                    .andExpect(status().isUnauthorized());
+        }
+    }
+
 }

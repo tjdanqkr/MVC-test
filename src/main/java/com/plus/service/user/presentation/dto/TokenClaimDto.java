@@ -16,5 +16,11 @@ public record TokenClaimDto(
                 user.getUsername()
         );
     }
+    public static TokenClaimDto of(UserTokenDetails user){
+        return new TokenClaimDto(
+                user.getId(),
+                user.getUsername()
+        );
+    }
 
 }
