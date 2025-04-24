@@ -1,17 +1,18 @@
 package com.plus.service.user.application;
 
+import com.plus.service.user.presentation.dto.TokenClaimDto;
 import com.plus.service.user.presentation.dto.TokenDto;
 
 import java.util.UUID;
 
 public interface TokenService {
-    TokenDto createAccessToken(String userId, String userName);
+    TokenDto createAccessToken(TokenClaimDto tokenClaimDto);
 
-    TokenDto createRefreshToken(String userId, String userName);
+    TokenDto createRefreshToken(TokenClaimDto tokenClaimDto);
 
-    UUID getUserIdFromAccessToken(String accessToken);
+    TokenClaimDto getClaimsFromAccessToken(String accessToken);
 
-    UUID getUserIdFromRefreshToken(String refreshToken);
+    TokenClaimDto getClaimsFromRefreshToken(String refreshToken);
 
     boolean isValidAccessToken(String accessToken);
 
