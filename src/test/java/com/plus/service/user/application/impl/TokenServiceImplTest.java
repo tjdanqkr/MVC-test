@@ -9,23 +9,30 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class TokenServiceImplTest {
     TokenServiceImpl tokenService;
-    long expiresIn = 1500;
+    long expiresIn = 1;
     String accessSecret = "secret";
     String refreshSecret = "refreshSecret";
+    Clock clock = Clock.systemDefaultZone();
     @BeforeEach
     void setUp() {
         tokenService = new TokenServiceImpl(
                 accessSecret,
                 expiresIn,
                 refreshSecret,
-                expiresIn
+                expiresIn,
+                clock
         );
     }
 
@@ -90,7 +97,7 @@ class TokenServiceImplTest {
             String userName = "userName";
             TokenClaimDto tokenClaimDto = new TokenClaimDto(userId, userName);
             TokenDto tokenDto = tokenService.createAccessToken(tokenClaimDto);
-            Thread.sleep(expiresIn);
+            Thread.sleep(expiresIn * 1000);
             // When & Then
             BusinessException businessException = assertThrows(BusinessException.class, () ->
                     tokenService.getClaimsFromAccessToken(tokenDto.token())
@@ -139,7 +146,7 @@ class TokenServiceImplTest {
             String userName = "userName";
             TokenClaimDto tokenClaimDto = new TokenClaimDto(userId, userName);
             TokenDto tokenDto = tokenService.createRefreshToken(tokenClaimDto);
-            Thread.sleep(expiresIn);
+            Thread.sleep(expiresIn * 1000);
             // When & Then
             BusinessException businessException = assertThrows(BusinessException.class, () ->
                     tokenService.getClaimsFromRefreshToken(tokenDto.token())
@@ -188,7 +195,7 @@ class TokenServiceImplTest {
             String userName = "userName";
             TokenClaimDto tokenClaimDto = new TokenClaimDto(userId, userName);
             TokenDto tokenDto = tokenService.createAccessToken(tokenClaimDto);
-            Thread.sleep(expiresIn);
+            Thread.sleep(expiresIn * 1000);
             // When & Then
             assertFalse(tokenService.isValidAccessToken(tokenDto.token()));
         }
@@ -229,7 +236,7 @@ class TokenServiceImplTest {
             String userName = "userName";
             TokenClaimDto tokenClaimDto = new TokenClaimDto(userId, userName);
             TokenDto tokenDto = tokenService.createRefreshToken(tokenClaimDto);
-            Thread.sleep(expiresIn);
+            Thread.sleep(expiresIn * 1000);
             // When & Then
             assertFalse(tokenService.isValidRefreshToken(tokenDto.token()));
         }

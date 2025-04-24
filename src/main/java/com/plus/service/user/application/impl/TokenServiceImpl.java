@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -29,36 +30,30 @@ public class TokenServiceImpl implements TokenService {
     private final long accessTokenExpiresIn;
     private final Algorithm refreshTokenSecret;
     private final long refreshTokenExpiresIn;
-    private static final ZoneId zoneId = ZoneId.of("Asia/Seoul");
+    private final Clock clock;
     private static final String TOKEN_USER_ID_KEY = "userId";
-
 
     @Override
     public TokenDto createAccessToken(TokenClaimDto tokenClaimDto) {
-        Instant expiresAt = new Date(System.currentTimeMillis() + accessTokenExpiresIn)
-                .toInstant()
-                .atZone(zoneId)
-                .toInstant();
+        Instant expiresAt = clock.instant().atZone(clock.getZone()).plusSeconds(accessTokenExpiresIn).toInstant();
         String token = JWT.create()
                 .withSubject(tokenClaimDto.userName())
                 .withClaim(TOKEN_USER_ID_KEY, tokenClaimDto.userId().toString())
                 .withExpiresAt(expiresAt)
                 .sign(accessTokenSecret);
-        return new TokenDto(token, LocalDateTime.ofInstant(expiresAt, zoneId));
+        System.out.println(expiresAt);
+        return new TokenDto(token, expiresAt.atZone(clock.getZone()).toLocalDateTime());
     }
 
     @Override
     public TokenDto createRefreshToken(TokenClaimDto tokenClaimDto) {
-        Instant expiresAt = new Date(System.currentTimeMillis() + refreshTokenExpiresIn)
-                .toInstant()
-                .atZone(zoneId)
-                .toInstant();
+        Instant expiresAt = clock.instant().atZone(clock.getZone()).plusSeconds(refreshTokenExpiresIn).toInstant();
         String token = JWT.create()
                 .withSubject(tokenClaimDto.userName())
                 .withClaim(TOKEN_USER_ID_KEY, tokenClaimDto.userId().toString())
                 .withExpiresAt(expiresAt)
                 .sign(refreshTokenSecret);
-        return new TokenDto(token, LocalDateTime.ofInstant(expiresAt, zoneId));
+        return new TokenDto(token, expiresAt.atZone(clock.getZone()).toLocalDateTime());
     }
 
     @Override
@@ -75,6 +70,7 @@ public class TokenServiceImpl implements TokenService {
         } catch (SignatureVerificationException e) {
             throw new BusinessException(TokenErrorCode.USER_TOKEN_INVALID);
         } catch (TokenExpiredException e) {
+            e.printStackTrace();
             throw new BusinessException(TokenErrorCode.USER_TOKEN_EXPIRED);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -130,10 +126,12 @@ public class TokenServiceImpl implements TokenService {
     public TokenServiceImpl(@Value("${token.access.secret}") String accessTokenSecret,
                             @Value("${token.access.expiration}") long accessTokenExpiresIn,
                             @Value("${token.refresh.secret}") String refreshTokenSecret,
-                            @Value("${token.refresh.expiration}") long refreshTokenExpiresIn) {
+                            @Value("${token.refresh.expiration}") long refreshTokenExpiresIn,
+                            Clock clock) {
         this.accessTokenSecret = Algorithm.HMAC256(accessTokenSecret);
         this.accessTokenExpiresIn = accessTokenExpiresIn;
         this.refreshTokenSecret = Algorithm.HMAC256(refreshTokenSecret);
         this.refreshTokenExpiresIn = refreshTokenExpiresIn;
+        this.clock = clock;
     }
 }
